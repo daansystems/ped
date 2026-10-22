@@ -42,6 +42,8 @@ sub help {
         ' (C)2005 DaanSystems, Niek Albers ',
         ' http://www.daansystems.com       ',
         ' mailto:nieka@daansystems.com     ',
+        ' Updates:                         ',
+        ' 2026 David Flink                 ',
         '----------------------------------',
         ' Ctrl+s Save                      ',
         ' Ctrl+f Search                    ',
@@ -140,7 +142,8 @@ sub get_escape_sequence {
     my $esc;
     while ( my $key = ReadKey() ) {
         $esc .= $key;
-        last if ( $key =~ /[a-z~]/i );
+        last if ( $key =~ /[a-np-z~]/i );
+        last if ( $esc =~ /O.$/i );
     }
 
     return $esc;
@@ -163,16 +166,16 @@ sub dokey {
         elsif ( $esc eq '[C' )  { moveright(1) }      # right
         elsif ( $esc eq '[D' )  { moveleft(1) }       # left
         elsif ( $esc eq '[3~' ) { delat() }           # del
-        elsif ( $esc eq '[1~' ) {                     # home
+        elsif ( $esc eq '[1~' || $esc eq 'OH' || $esc eq '[H' ) {      # home
             moveup( current_line_number() );
         }
-        elsif ( $esc eq '[4~' || $esc eq '[7~' ) {                     # end
-            movedown( get_nrlines() - current_line_number() );
+        elsif ( $esc eq '[4~' || $esc eq '[7~' || $esc eq 'OF' || $esc eq '[F' ) {
+            movedown( get_nrlines() - current_line_number() )          # end;
         }
         elsif ( $esc eq '[2~' || $esc eq '[8~' ) {                     # insert
             $ins = !$ins;
         }
-        elsif ( $esc eq '[[A' || $esc eq '[11~' ) {
+        elsif ( $esc eq '[[A' || $esc eq '[11~' || $esc eq 'OP' ) {
             help();
         }
     }
